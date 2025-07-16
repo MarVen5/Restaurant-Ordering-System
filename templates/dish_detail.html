@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ dish.name }} - 山野食光</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #faf6f1;
+            color: #6d4c41;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* 页眉样式 */
+        header {
+            background-color: #8b5a2b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header .header-content {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        header h1 {
+            color: #fff;
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        header nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header nav ul li {
+            margin-left: 25px;
+        }
+        
+        header nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        
+        header nav ul li a:hover {
+            color: #ffd700;
+        }
+        
+        .nav-btn {
+            background-color: #fff;
+            color: #8b5a2b !important;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background-color: #ffd700;
+            color: #8b5a2b !important;
+        }
+        
+        .active-nav {
+            color: #ffd700 !important;
+            font-weight: bold;
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 100px auto 30px;
+            padding: 0 20px;
+        }
+        
+        .back-link {
+            margin-bottom: 20px;
+        }
+        
+        .back-link a {
+            color: #8b5a2b;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            transition: color 0.3s;
+        }
+        
+        .back-link a:hover {
+            color: #6d4c41;
+        }
+        
+        .dish-detail {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dish-detail h2 {
+            color: #8b5a2b;
+            margin-top: 0;
+            font-size: 2rem;
+        }
+        
+        .price {
+            color: #8b5a2b;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .category {
+            color: #6d4c41;
+            margin-bottom: 20px;
+        }
+        
+        .description h3 {
+            color: #8b5a2b;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .order-form h3 {
+            color: #8b5a2b;
+            font-size: 1.2rem;
+            margin: 20px 0 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #6d4c41;
+        }
+        
+        .form-group input {
+            padding: 8px 12px;
+            border: 1px solid #e0d6c8;
+            border-radius: 5px;
+            width: 80px;
+        }
+        
+        .btn {
+            background-color: #8b5a2b;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            background-color: #6d4c41;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>山野食光</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">首页</a></li>
+                    <li><a href="{{ url_for('menu') }}" class="active-nav">菜单</a></li>
+                    <li><a href="{{ url_for('tables') }}">桌位预订</a></li>
+                    <li><a href="{{ url_for('my_reviews') }}">评论</a></li>
+                    <li><a href="{{ url_for('my_orders') }}">我的订单</a></li>
+                    {% if not session.get('user_id') %}
+                    <li><a href="{{ url_for('login') }}" class="nav-btn">登录</a></li>
+                    <li><a href="{{ url_for('register') }}" class="nav-btn">注册</a></li>
+                    {% else %}
+                    <li><a href="{{ url_for('logout') }}" class="nav-btn">退出登录</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <div class="back-link">
+            <a href="{{ url_for('menu') }}"><i class="fas fa-arrow-left"></i> 返回菜单</a>
+        </div>
+        
+        <div class="dish-detail">
+            <h2>{{ dish.name }}</h2>
+            <p class="price">¥{{ dish.price }}</p>
+            <p class="category">分类: {{ dish.category }}</p>
+            <div class="description">
+                <h3>描述</h3>
+                <p>{{ dish.description }}</p>
+            </div>
+            
+            <div class="order-form">
+                <h3>下单</h3>
+                <form action="{{ url_for('place_order') }}" method="post">
+                    <input type="hidden" name="dish_id" value="{{ dish.dish_id }}">
+                    
+                    <div class="form-group">
+                        <label for="quantity">数量:</label>
+                        <input type="number" id="quantity" name="quantity" value="1" min="1" max="10">
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn">确认下单</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

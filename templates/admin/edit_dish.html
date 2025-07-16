@@ -1,0 +1,190 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}编辑菜品{% endblock %}
+
+{% block additional_styles %}
+<style>
+    .edit-form {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .form-title {
+        color: #8b5a2b;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #e0d6c8;
+        padding-bottom: 10px;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #8b5a2b;
+        font-weight: bold;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #e0d6c8;
+        border-radius: 5px;
+        font-size: 16px;
+        color: #6d4c41;
+    }
+    
+    .form-group textarea {
+        height: 100px;
+        resize: vertical;
+    }
+    
+    .btn {
+        background-color: #8b5a2b;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-right: 10px;
+    }
+    
+    .btn:hover {
+        background-color: #6d4c41;
+    }
+    
+    .btn-cancel {
+        background-color: #6c757d;
+    }
+    
+    .preview-image {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-top: 10px;
+        border: 1px solid #e0d6c8;
+    }
+    
+    .actions {
+        display: flex;
+        justify-content: flex-start;
+        margin-top: 20px;
+    }
+    
+    .dish-preview {
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    
+    .dish-preview h3 {
+        color: #8b5a2b;
+        margin: 10px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-form">
+    <h2 class="form-title">编辑菜品</h2>
+    
+    <div class="dish-preview">
+        <h3>{{ dish.name }}</h3>
+        <img src="{{ dish.image_url }}" alt="{{ dish.name }}" class="preview-image">
+    </div>
+    
+    <form action="{{ url_for('admin_edit_dish', dish_id=dish.dish_id) }}" method="post">
+        <div class="form-group">
+            <label for="name">菜品名称</label>
+            <input type="text" id="name" name="name" value="{{ dish.name }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="price">价格</label>
+            <input type="number" id="price" name="price" step="0.01" min="0" value="{{ dish.price }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="category">分类</label>
+            <select id="category" name="category" required>
+                {% for category in categories %}
+                <option value="{{ category }}" {% if category == dish.category %}selected{% endif %}>{{ category }}</option>
+                {% endfor %}
+                <option value="other">其他</option>
+            </select>
+        </div>
+        
+        <div class="form-group" id="new-category-group" style="display: none;">
+            <label for="new_category">新分类名称</label>
+            <input type="text" id="new_category" name="new_category">
+        </div>
+        
+        <div class="form-group">
+            <label for="description">描述</label>
+            <textarea id="description" name="description" required>{{ dish.description }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="image_url">图片URL</label>
+            <input type="text" id="image_url" name="image_url" value="{{ dish.image_url }}">
+            <div id="image-preview"></div>
+        </div>
+        
+        <div class="actions">
+            <button type="submit" class="btn">保存更改</button>
+            <a href="{{ url_for('admin_dishes') }}" class="btn btn-cancel">取消</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 处理新分类选项
+        const categorySelect = document.getElementById('category');
+        const newCategoryGroup = document.getElementById('new-category-group');
+        
+        categorySelect.addEventListener('change', function() {
+            if (this.value === 'other') {
+                newCategoryGroup.style.display = 'block';
+                document.getElementById('new_category').required = true;
+            } else {
+                newCategoryGroup.style.display = 'none';
+                document.getElementById('new_category').required = false;
+            }
+        });
+        
+        // 图片预览功能
+        const imageUrlInput = document.getElementById('image_url');
+        const imagePreview = document.getElementById('image-preview');
+        
+        if (imageUrlInput.value) {
+            showImagePreview(imageUrlInput.value);
+        }
+        
+        imageUrlInput.addEventListener('input', function() {
+            showImagePreview(this.value);
+        });
+        
+        function showImagePreview(url) {
+            if (!url) {
+                imagePreview.innerHTML = '';
+                return;
+            }
+            
+            imagePreview.innerHTML = `<img src="${url}" alt="预览" class="preview-image">`;
+        }
+    });
+</script>
+{% endblock %} 

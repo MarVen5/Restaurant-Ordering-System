@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}管理员控制面板{% endblock %} - 山野食光</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #faf6f1;
+            color: #6d4c41;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* 页眉样式 - 与用户界面保持一致 */
+        header {
+            background-color: #8b5a2b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 120px auto 30px; /* 增加上边距，为固定导航栏留出空间 */
+            padding: 0 20px;
+        }
+        
+        header .header-content {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        header h1 {
+            color: #fff;
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        header nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header nav ul li {
+            margin-left: 25px;
+        }
+        
+        header nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        
+        header nav ul li a:hover {
+            color: #ffd700;
+        }
+        
+        .nav-btn {
+            background-color: #fff;
+            color: #8b5a2b !important;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background-color: #ffd700;
+            color: #8b5a2b !important;
+        }
+        
+        .active-nav {
+            color: #ffd700 !important;
+            font-weight: bold;
+        }
+        
+        /* 消息提示样式 */
+        .success-message, .error-message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .success-message {
+            background-color: #dff0d8;
+            color: #3c763d;
+            border: 1px solid #d6e9c6;
+        }
+        
+        .error-message {
+            background-color: #f2dede;
+            color: #a94442;
+            border: 1px solid #ebccd1;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .close-modal {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close-modal:hover {
+            color: #8b5a2b;
+        }
+    </style>
+    {% block additional_styles %}{% endblock %}
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>山野食光 - 管理员</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('admin_dishes') }}" {% if request.path == url_for('admin_dishes') %}class="active-nav"{% endif %}>菜品管理</a></li>
+                    <li><a href="{{ url_for('admin_tables') }}" {% if request.path == url_for('admin_tables') %}class="active-nav"{% endif %}>桌位管理</a></li>
+                    <li><a href="{{ url_for('admin_orders') }}" {% if request.path == url_for('admin_orders') %}class="active-nav"{% endif %}>订单管理</a></li>
+                    <li><a href="{{ url_for('admin_reservations') }}" {% if request.path == url_for('admin_reservations') %}class="active-nav"{% endif %}>预订管理</a></li>
+                    <li><a href="{{ url_for('admin_reviews') }}" {% if request.path == url_for('admin_reviews') %}class="active-nav"{% endif %}>评论管理</a></li>
+                    <li><a href="{{ url_for('logout') }}" class="nav-btn">退出登录</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="{{ category }}-message">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html> 

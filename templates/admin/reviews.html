@@ -1,0 +1,255 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}评论管理{% endblock %}
+
+{% block header_title %}评论管理{% endblock %}
+
+{% block additional_styles %}
+<style>
+    .reviews-container {
+        margin-bottom: 40px;
+    }
+    
+    .review-card {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease;
+    }
+    
+    .review-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .reviewer-info {
+        display: flex;
+        align-items: center;
+    }
+    
+    .reviewer-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #8b5a2b;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-right: 15px;
+    }
+    
+    .reviewer-name {
+        font-weight: bold;
+        color: #8b5a2b;
+        font-size: 1.2rem;
+    }
+    
+    .review-date {
+        color: #999;
+        font-size: 0.9rem;
+    }
+    
+    .review-ratings {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    
+    .overall-stars {
+        font-size: 1.2rem;
+        color: #ffd700;
+        margin-bottom: 5px;
+    }
+    
+    .review-details {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        gap: 15px;
+    }
+    
+    .rating-detail {
+        display: flex;
+        align-items: center;
+        margin-right: 15px;
+    }
+    
+    .rating-label {
+        color: #8b5a2b;
+        font-weight: bold;
+        margin-right: 5px;
+    }
+    
+    .rating-stars {
+        color: #ffd700;
+    }
+    
+    .review-content {
+        color: #6d4c41;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+    
+    .review-actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .delete-btn {
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        margin-left: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background-color: #8b5a2b;
+        color: #fff;
+        border: none;
+    }
+    
+    .delete-btn:hover {
+        background-color: #6d4c41;
+    }
+    
+    .no-reviews {
+        text-align: center;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin: 30px 0;
+    }
+    
+    .page-link {
+        padding: 8px 15px;
+        margin: 0 5px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        color: #8b5a2b;
+        text-decoration: none;
+        border-radius: 3px;
+    }
+    
+    .page-link.active {
+        background-color: #8b5a2b;
+        color: white;
+        border-color: #8b5a2b;
+    }
+    
+    .section-title {
+        text-align: center;
+        color: #8b5a2b;
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="reviews-container">
+    {% if reviews %}
+        {% for review in reviews %}
+        <div class="review-card">
+            <div class="review-header">
+                <div class="reviewer-info">
+                    <div class="reviewer-avatar">{{ review.username[0] }}</div>
+                    <div>
+                        <div class="reviewer-name">{{ review.username }}</div>
+                        <div class="review-date">{{ review.review_time.strftime('%Y-%m-%d %H:%M') if not review.review_time is string else review.review_time }}</div>
+                    </div>
+                </div>
+                
+                <div class="review-ratings">
+                    <div class="overall-stars">
+                        {% for i in range(5) %}
+                            {% if i < review.rating %}
+                                <i class="fas fa-star"></i>
+                            {% else %}
+                                <i class="far fa-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="review-details">
+                <div class="rating-detail">
+                    <span class="rating-label">菜品:</span>
+                    <span class="rating-stars">
+                        {% for i in range(5) %}
+                            {% if i < review.food_rating %}
+                                <i class="fas fa-star"></i>
+                            {% else %}
+                                <i class="far fa-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+                <div class="rating-detail">
+                    <span class="rating-label">环境:</span>
+                    <span class="rating-stars">
+                        {% for i in range(5) %}
+                            {% if i < review.environment_rating %}
+                                <i class="fas fa-star"></i>
+                            {% else %}
+                                <i class="far fa-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+                <div class="rating-detail">
+                    <span class="rating-label">服务:</span>
+                    <span class="rating-stars">
+                        {% for i in range(5) %}
+                            {% if i < review.service_rating %}
+                                <i class="fas fa-star"></i>
+                            {% else %}
+                                <i class="far fa-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="review-content">
+                {{ review.content }}
+            </div>
+            
+            <div class="review-actions">
+                <form action="{{ url_for('admin_delete_review', review_id=review.review_id) }}" method="post">
+                    <button type="submit" class="delete-btn" onclick="return confirm('确定要删除这条评论吗？')">删除评论</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+        
+        {% if total_pages > 1 %}
+        <div class="pagination">
+            {% for page in range(1, total_pages + 1) %}
+            <a href="{{ url_for('admin_reviews', page=page) }}" class="page-link {% if page == current_page %}active{% endif %}">{{ page }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="no-reviews">
+            <p>暂无评论</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

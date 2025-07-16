@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>山野食光</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        /* 首页特定样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #faf6f1;
+            color: #6d4c41;
+        }
+        
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 60px; /* 为固定导航栏留出空间 */
+            overflow: hidden;
+        }
+        
+        /* 移除背景暗化效果 */
+        .hero::before {
+            display: none;
+        }
+        
+        .hero-content {
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .hero-image {
+            width: 100%;
+            height: 100vh;
+            object-fit: cover;
+        }
+        
+        .section-title {
+            text-align: center;
+            color: #8b5a2b;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+        
+        .about-section {
+            text-align: center;
+            padding: 60px 0;
+            background-color: #faf6f1;
+        }
+        
+        .about-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .about-text {
+            margin-bottom: 40px;
+        }
+        
+        .about-text p {
+            color: #8b5a2b;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        
+        /* 推荐菜品部分 */
+        .featured-section {
+            padding: 60px 0;
+            background-color: #fff;
+        }
+        
+        .featured-dishes {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .featured-dish {
+            width: 300px;
+            background-color: #faf6f1;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .featured-dish:hover {
+            transform: translateY(-10px);
+        }
+        
+        .featured-dish img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .featured-dish-info {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .featured-dish-info h3 {
+            color: #8b5a2b;
+            margin-bottom: 10px;
+        }
+        
+        .featured-dish-info p {
+            color: #6d4c41;
+            margin-bottom: 15px;
+        }
+        
+        .featured-dish-price {
+            font-weight: bold;
+            color: #8b5a2b;
+            font-size: 1.2rem;
+        }
+        
+        /* 餐厅评价部分 */
+        .reviews-section {
+            padding: 60px 0;
+            background-color: #faf6f1;
+        }
+        
+        .reviews-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .review-card {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .reviewer-name {
+            font-weight: bold;
+            color: #8b5a2b;
+        }
+        
+        .review-date {
+            color: #999;
+            font-size: 0.9rem;
+        }
+        
+        .review-rating {
+            margin-bottom: 10px;
+        }
+        
+        .review-rating i {
+            color: #ffd700;
+            margin-right: 2px;
+        }
+        
+        .review-text {
+            color: #6d4c41;
+            line-height: 1.6;
+        }
+        
+        /* 页眉样式 */
+        header {
+            background-color: #8b5a2b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header .header-content {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        header h1 {
+            color: #fff;
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        header nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header nav ul li {
+            margin-left: 25px;
+        }
+        
+        header nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        
+        header nav ul li a:hover {
+            color: #ffd700;
+        }
+        
+        .nav-btn {
+            background-color: #fff;
+            color: #8b5a2b !important;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background-color: #ffd700;
+            color: #8b5a2b !important;
+        }
+        
+        .active-nav {
+            color: #ffd700 !important;
+            font-weight: bold;
+        }
+        
+        /* 页脚样式 */
+        footer {
+            background-color: #8b5a2b;
+            padding: 40px 0 20px;
+            color: #fff;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 15px;
+            color: #fff;
+        }
+        
+        .footer-section p {
+            margin: 5px 0;
+            color: #fff;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .copyright p {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="landing-page">
+        <header>
+            <div class="header-content">
+                <h1>山野食光</h1>
+            <nav>
+                <ul>
+                        <li><a href="{{ url_for('index') }}" class="active-nav">首页</a></li>
+                    <li><a href="#about">关于我们</a></li>
+                        <li><a href="#featured">推荐菜品</a></li>
+                        <li><a href="#reviews">餐厅评价</a></li>
+                        <li><a href="{{ url_for('menu') }}">菜单</a></li>
+                        <li><a href="{{ url_for('tables') }}">桌位预订</a></li>
+                        {% if not session.get('user_id') %}
+                    <li><a href="{{ url_for('login') }}" class="nav-btn">登录</a></li>
+                    <li><a href="{{ url_for('register') }}" class="nav-btn">注册</a></li>
+                        {% else %}
+                        <li><a href="{{ url_for('my_orders') }}">我的订单</a></li>
+                        <li><a href="{{ url_for('my_reviews') }}">评论</a></li>
+                        <li><a href="{{ url_for('logout') }}" class="nav-btn">退出登录</a></li>
+                        {% endif %}
+                </ul>
+            </nav>
+            </div>
+        </header>
+
+        <section id="home" class="hero">
+            <img src="{{ url_for('static', filename='images/image1.png') }}" alt="山野食光餐厅" class="hero-image">
+        </section>
+
+        <section id="about" class="about-section">
+            <h2 class="section-title">关于我们</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                    <p>"山野食光"成立于2025年，坐落于远离尘嚣的山麓。</p>
+                    <p>我们始终坚持食材可溯源、品质有保障的原则。严选优质食材，涵盖海鲜、肉类、蔬果等多元菜品。</p>
+                    <p>厨师团队由资深大厨组成。他们精通中西烹饪技艺，擅长将食材原味与创意巧思完美融合。</p>
+                    <p>我们的愿景是为宾客呈现一场精致丰盛的山野美食之旅。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="featured" class="featured-section">
+            <h2 class="section-title">推荐菜品</h2>
+                <div class="featured-dishes">
+                    <div class="featured-dish">
+                    <img src="{{ url_for('static', filename='images/dish4.png') }}" alt="玛格丽特披萨">
+                    <div class="featured-dish-info">
+                        <h3>玛格丽特披萨</h3>
+                        <p>经典意式披萨，配以新鲜番茄酱、马苏里拉奶酪、罗勒叶和特级初榨橄榄油。</p>
+                        <div class="featured-dish-price">¥68.00</div>
+                    </div>
+                    </div>
+                    <div class="featured-dish">
+                    <img src="{{ url_for('static', filename='images/dish5.png') }}" alt="黑椒牛排">
+                    <div class="featured-dish-info">
+                        <h3>黑椒牛排</h3>
+                        <p>精选澳洲进口牛排，搭配黑椒汁，口感鲜嫩多汁，配以时令蔬菜和土豆泥。</p>
+                        <div class="featured-dish-price">¥128.00</div>
+                    </div>
+                    </div>
+                    <div class="featured-dish">
+                    <img src="{{ url_for('static', filename='images/dish16.png') }}" alt="巧克力熔岩蛋糕">
+                    <div class="featured-dish-info">
+                        <h3>巧克力熔岩蛋糕</h3>
+                        <p>外层松软，内含热熔巧克力，搭配香草冰淇淋，口感丰富。</p>
+                        <div class="featured-dish-price">¥38.00</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="reviews" class="reviews-section">
+            <h2 class="section-title">餐厅评价</h2>
+            <div class="reviews-container">
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-name">食评家 · 李墨言</div>
+                    </div>
+                    <div class="review-text">
+                        山野食光在氛围营造和服务体验方面可圈可点，每一次到访都宛如一场与自然对话的私享之旅，细节之处见匠心，让人印象深刻。
+                    </div>
+                </div>
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-name">美食专栏作家 · 朱盈盈李女士</div>
+                    </div>
+                    <div class="review-text">
+                        这里的用餐体验兼具新意与质朴，无论是环境布置还是食材选用，都能感受到浓郁的山野气息，整体呈现出恰到好处的平衡与和谐。
+                    </div>
+                </div>
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-name">餐饮评论人 · 陈行</div>
+                    </div>
+                    <div class="review-text">
+                        山野食光凭借严苛的食材把控与专业的厨师团队，将传统与创新完美结合，为食客带来一份舒心自在的味觉盛宴，整体品质值得肯定。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3>营业时间</h3>
+                        <p>周一至周五: 11:00 - 22:00</p>
+                        <p>周六至周日: 10:00 - 23:00</p>
+                    </div>
+                    <div class="footer-section">
+                    <h3>联系方式</h3>
+                        <p>电话: 123-456-7890</p>
+                    <p>邮箱: info@shanyeshiguang.com</p>
+                    </div>
+                    <div class="footer-section">
+                        <h3>地址</h3>
+                    <p>安徽省合肥市蜀山路123号</p>
+                    <p>邮编: 114514</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 山野食光餐厅. 保留所有权利.</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html> 

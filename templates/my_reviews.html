@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>餐厅评论 - 山野食光</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #faf6f1;
+            color: #6d4c41;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* 页眉样式 */
+        header {
+            background-color: #8b5a2b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header .header-content {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        header h1 {
+            color: #fff;
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        header nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header nav ul li {
+            margin-left: 25px;
+        }
+        
+        header nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        
+        header nav ul li a:hover {
+            color: #ffd700;
+        }
+        
+        .nav-btn {
+            background-color: #fff;
+            color: #8b5a2b !important;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background-color: #ffd700;
+            color: #8b5a2b !important;
+        }
+        
+        .active-nav {
+            color: #ffd700 !important;
+            font-weight: bold;
+        }
+        
+        /* 主要内容样式 */
+        .container {
+            max-width: 1200px;
+            margin: 100px auto 40px;
+            padding: 0 20px;
+        }
+        
+        .page-title {
+            text-align: center;
+            color: #8b5a2b;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+        
+        /* 添加评论表单样式 */
+        .review-form-container {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .review-form-container h2 {
+            color: #8b5a2b;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .review-form {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            color: #8b5a2b;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .rating-group {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+        
+        .rating-group input {
+            display: none;
+        }
+        
+        .rating-group label {
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            margin: 0 5px;
+            color: #e0d6c8;
+            transition: all 0.3s ease;
+            font-size: 30px;
+            line-height: 30px;
+            text-align: center;
+        }
+        
+        .rating-group input:checked ~ label,
+        .rating-group label:hover,
+        .rating-group label:hover ~ label {
+            color: #ffd700;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 1px solid #e0d6c8;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #6d4c41;
+            resize: vertical;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        .submit-btn {
+            background-color: #8b5a2b;
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .submit-btn:hover {
+            background-color: #6d4c41;
+            transform: translateY(-2px);
+        }
+        
+        /* 评论列表部分 */
+        .reviews-list {
+            margin-bottom: 40px;
+        }
+        
+        .review-card {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .review-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .reviewer-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #8b5a2b;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .reviewer-name {
+            font-weight: bold;
+            color: #8b5a2b;
+            font-size: 1.2rem;
+        }
+        
+        .review-date {
+            color: #999;
+            font-size: 0.9rem;
+        }
+        
+        .review-ratings {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .overall-stars {
+            font-size: 1.2rem;
+            color: #ffd700;
+            margin-bottom: 5px;
+        }
+        
+        .review-details {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        
+        .rating-detail {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+        
+        .rating-label {
+            color: #8b5a2b;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        
+        .rating-stars {
+            color: #ffd700;
+        }
+        
+        .review-content {
+            color: #6d4c41;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .review-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .edit-btn, .delete-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .edit-btn {
+            background-color: #8b5a2b;
+            color: #fff;
+            text-decoration: none;
+        }
+        
+        .edit-btn:hover {
+            background-color: #6d4c41;
+        }
+        
+        .delete-btn {
+            background-color: #f44336;
+            color: #fff;
+            border: none;
+        }
+        
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .alert-success {
+            background-color: #dff0d8;
+            color: #3c763d;
+            border: 1px solid #d6e9c6;
+        }
+        
+        .alert-error {
+            background-color: #f2dede;
+            color: #a94442;
+            border: 1px solid #ebccd1;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                padding: 15px;
+            }
+            
+            header nav ul {
+                margin-top: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            header nav ul li {
+                margin: 5px 10px;
+            }
+            
+            .container {
+                margin-top: 150px;
+            }
+            
+            .review-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .review-ratings {
+                margin-top: 15px;
+                align-items: flex-start;
+            }
+            
+            .review-details {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>山野食光</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">首页</a></li>
+                    <li><a href="{{ url_for('menu') }}">菜单</a></li>
+                    <li><a href="{{ url_for('tables') }}">桌位预订</a></li>
+                    <li><a href="{{ url_for('my_reviews') }}" class="active-nav">评论</a></li>
+                    <li><a href="{{ url_for('my_orders') }}">我的订单</a></li>
+                    {% if not session.get('user_id') %}
+                    <li><a href="{{ url_for('login') }}" class="nav-btn">登录</a></li>
+                    <li><a href="{{ url_for('register') }}" class="nav-btn">注册</a></li>
+                    {% else %}
+                    <li><a href="{{ url_for('logout') }}" class="nav-btn">退出登录</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="page-title">餐厅评论</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- 添加评论表单 -->
+        <div class="review-form-container">
+            <h2>发表您的评论</h2>
+            <form action="{{ url_for('post_review') }}" method="post" class="review-form">
+                <div class="form-group">
+                    <label class="form-label">总体评分</label>
+                    <div class="rating-group">
+                        <input type="radio" id="star5" name="rating" value="5" checked>
+                        <label for="star5" class="fas fa-star"></label>
+                        <input type="radio" id="star4" name="rating" value="4">
+                        <label for="star4" class="fas fa-star"></label>
+                        <input type="radio" id="star3" name="rating" value="3">
+                        <label for="star3" class="fas fa-star"></label>
+                        <input type="radio" id="star2" name="rating" value="2">
+                        <label for="star2" class="fas fa-star"></label>
+                        <input type="radio" id="star1" name="rating" value="1">
+                        <label for="star1" class="fas fa-star"></label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">菜品评分</label>
+                    <div class="rating-group">
+                        <input type="radio" id="food5" name="food_rating" value="5" checked>
+                        <label for="food5" class="fas fa-star"></label>
+                        <input type="radio" id="food4" name="food_rating" value="4">
+                        <label for="food4" class="fas fa-star"></label>
+                        <input type="radio" id="food3" name="food_rating" value="3">
+                        <label for="food3" class="fas fa-star"></label>
+                        <input type="radio" id="food2" name="food_rating" value="2">
+                        <label for="food2" class="fas fa-star"></label>
+                        <input type="radio" id="food1" name="food_rating" value="1">
+                        <label for="food1" class="fas fa-star"></label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">环境评分</label>
+                    <div class="rating-group">
+                        <input type="radio" id="env5" name="environment_rating" value="5" checked>
+                        <label for="env5" class="fas fa-star"></label>
+                        <input type="radio" id="env4" name="environment_rating" value="4">
+                        <label for="env4" class="fas fa-star"></label>
+                        <input type="radio" id="env3" name="environment_rating" value="3">
+                        <label for="env3" class="fas fa-star"></label>
+                        <input type="radio" id="env2" name="environment_rating" value="2">
+                        <label for="env2" class="fas fa-star"></label>
+                        <input type="radio" id="env1" name="environment_rating" value="1">
+                        <label for="env1" class="fas fa-star"></label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">服务评分</label>
+                    <div class="rating-group">
+                        <input type="radio" id="service5" name="service_rating" value="5" checked>
+                        <label for="service5" class="fas fa-star"></label>
+                        <input type="radio" id="service4" name="service_rating" value="4">
+                        <label for="service4" class="fas fa-star"></label>
+                        <input type="radio" id="service3" name="service_rating" value="3">
+                        <label for="service3" class="fas fa-star"></label>
+                        <input type="radio" id="service2" name="service_rating" value="2">
+                        <label for="service2" class="fas fa-star"></label>
+                        <input type="radio" id="service1" name="service_rating" value="1">
+                        <label for="service1" class="fas fa-star"></label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="content">评论内容</label>
+                    <textarea id="content" name="content" placeholder="请分享您的用餐体验..." required></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">提交评论</button>
+            </form>
+        </div>
+        
+        <!-- 所有评论列表 -->
+        <h2 style="color: #8b5a2b; text-align: center; margin-bottom: 20px;">所有评论</h2>
+        
+        {% if reviews %}
+            <div class="reviews-list">
+                {% for review in reviews %}
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">
+                                {{ review.username[0] }}
+                            </div>
+                            <div>
+                                <div class="reviewer-name">{{ review.username }}</div>
+                                <div class="review-date">{{ review.review_time.strftime('%Y-%m-%d %H:%M') if review.review_time else '' }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="review-ratings">
+                            <div class="overall-stars">
+                                {% for i in range(5) %}
+                                    {% if i < review.rating %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="review-details">
+                        <div class="rating-detail">
+                            <span class="rating-label">菜品:</span>
+                            <span class="rating-stars">
+                                {% for i in range(5) %}
+                                    {% if i < review.food_rating %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </span>
+                        </div>
+                        <div class="rating-detail">
+                            <span class="rating-label">环境:</span>
+                            <span class="rating-stars">
+                                {% for i in range(5) %}
+                                    {% if i < review.environment_rating %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </span>
+                        </div>
+                        <div class="rating-detail">
+                            <span class="rating-label">服务:</span>
+                            <span class="rating-stars">
+                                {% for i in range(5) %}
+                                    {% if i < review.service_rating %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="review-content">
+                        {{ review.content }}
+                    </div>
+                    
+                    {% if session.get('user_id') == review.user_id %}
+                    <div class="review-actions">
+                        <a href="{{ url_for('edit_review', review_id=review.review_id) }}" class="edit-btn">编辑</a>
+                        <button class="delete-btn" onclick="deleteReview({{ review.review_id }})">删除</button>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 30px; background-color: #fff; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);">
+                <p style="color: #6d4c41; font-size: 1.2rem;">暂无评论</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function deleteReview(reviewId) {
+            if (confirm('确定要删除这条评论吗？')) {
+                fetch(`/delete_review/${reviewId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.message || '删除失败，请稍后再试');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('删除失败，请稍后再试');
+                });
+            }
+        }
+    </script>
+</body>
+</html> 

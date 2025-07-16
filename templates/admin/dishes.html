@@ -1,0 +1,274 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}菜品管理{% endblock %}
+
+{% block additional_styles %}
+<style>
+    .add-form {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-title {
+        color: #8b5a2b;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #e0d6c8;
+        padding-bottom: 10px;
+        text-align: center;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #8b5a2b;
+        font-weight: bold;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #e0d6c8;
+        border-radius: 5px;
+        font-size: 16px;
+        color: #6d4c41;
+    }
+    
+    .form-group textarea {
+        height: 100px;
+        resize: vertical;
+    }
+    
+    .btn {
+        background-color: #8b5a2b;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .btn:hover {
+        background-color: #6d4c41;
+    }
+    
+    .btn-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .form-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .form-row .form-group {
+        flex: 1;
+        margin-bottom: 0;
+    }
+    
+    .dishes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .dish-card {
+        background-color: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-align: center;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .dish-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .dish-image {
+        height: 200px;
+        overflow: hidden;
+    }
+    
+    .dish-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .dish-info {
+        padding: 15px;
+    }
+    
+    .dish-card h3 {
+        color: #8b5a2b;
+        font-size: 1.3rem;
+        margin: 15px 0 10px;
+    }
+    
+    .price {
+        color: #8b5a2b;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+    
+    .dish-description {
+        color: #6d4c41;
+        margin: 15px 0;
+        font-size: 0.9rem;
+        height: 60px;
+        overflow: hidden;
+    }
+    
+    .dish-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        background-color: transparent;
+        margin-top: 10px;
+    }
+    
+    .action-btn {
+        padding: 5px 10px;
+        border-radius: 3px;
+        text-decoration: none;
+        color: #fff;
+        font-size: 14px;
+        display: inline-block;
+        cursor: pointer;
+        border: none;
+        background-color: #8b5a2b;
+        width: 60px;
+        text-align: center;
+    }
+    
+    .edit-btn {
+        background-color: #8b5a2b;
+    }
+    
+    .delete-btn {
+        background-color: #8b5a2b;
+    }
+    
+    form {
+        margin: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="add-form">
+    <h2 class="form-title">添加新菜品</h2>
+    <form action="{{ url_for('admin_dishes') }}" method="post">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="name">菜品名称</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="price">价格</label>
+                <input type="number" id="price" name="price" min="0" step="0.01" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="category">分类</label>
+                <select id="category" name="category" required>
+                    <option value="">请选择分类</option>
+                    {% for category in categories %}
+                    <option value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                    <option value="other">其他</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="image_url">图片URL</label>
+                <input type="text" id="image_url" name="image_url">
+            </div>
+        </div>
+        
+        <div class="form-group" id="new-category-group" style="display: none;">
+            <label for="new_category">新分类名称</label>
+            <input type="text" id="new_category" name="new_category">
+        </div>
+        
+        <div class="form-group">
+            <label for="description">描述</label>
+            <textarea id="description" name="description" required></textarea>
+        </div>
+        
+        <div class="btn-container">
+            <button type="submit" class="btn">添加菜品</button>
+        </div>
+    </form>
+</div>
+
+<div class="dishes-grid">
+    {% for dish in dishes %}
+    <div class="dish-card">
+        <div class="dish-image">
+            <img src="{{ dish.image_url }}" alt="{{ dish.name }}">
+        </div>
+        <div class="dish-info">
+            <h3>{{ dish.name }}</h3>
+            <div class="price">¥{{ "%.2f"|format(dish.price) }}</div>
+            <div class="dish-description">{{ dish.description }}</div>
+            <div class="dish-category">分类: {{ dish.category }}</div>
+            <div class="dish-actions">
+                <a href="{{ url_for('admin_edit_dish', dish_id=dish.dish_id) }}" class="action-btn edit-btn">编辑</a>
+                <a href="javascript:void(0)" class="action-btn delete-btn" onclick="confirmDelete({{ dish.dish_id }})">删除</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- 添加一个隐藏的表单用于删除操作 -->
+<form id="delete-form" method="post" style="display: none;">
+    <input type="hidden" id="delete-dish-id" name="dish_id">
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // 当选择"其他"分类时，显示输入新分类的输入框
+    document.getElementById('category').addEventListener('change', function() {
+        var newCategoryGroup = document.getElementById('new-category-group');
+        if (this.value === 'other') {
+            newCategoryGroup.style.display = 'block';
+            document.getElementById('new_category').required = true;
+        } else {
+            newCategoryGroup.style.display = 'none';
+            document.getElementById('new_category').required = false;
+        }
+    });
+    
+    // 删除菜品确认函数
+    function confirmDelete(dishId) {
+        if (confirm('确定要删除这个菜品吗？')) {
+            var form = document.getElementById('delete-form');
+            document.getElementById('delete-dish-id').value = dishId;
+            form.action = '/admin/dishes/' + dishId + '/delete';
+            form.submit();
+        }
+    }
+</script>
+{% endblock %} 

@@ -1,0 +1,369 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}订单管理{% endblock %}
+
+{% block additional_styles %}
+<style>
+    .orders-list {
+        background-color: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+    }
+    
+    .order-item {
+        padding: 25px;
+        border-bottom: 1px solid #e0d6c8;
+        transition: background-color 0.3s;
+    }
+    
+    .order-item:last-child {
+        border-bottom: none;
+    }
+    
+    .order-item:hover {
+        background-color: #f8f5f0;
+    }
+    
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .order-id {
+        font-weight: bold;
+        color: #8b5a2b;
+        font-size: 1.2rem;
+    }
+    
+    .order-time {
+        color: #999;
+        font-size: 0.9rem;
+    }
+    
+    .order-status {
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        color: #fff;
+        display: inline-block;
+        margin-left: 15px;
+    }
+    
+    .status-pending {
+        background-color: #ff9800; /* 橙色，表示待支付 */
+    }
+    
+    .status-preparing {
+        background-color: #2196f3; /* 蓝色，表示准备中 */
+    }
+    
+    .status-completed {
+        background-color: #4caf50; /* 绿色，表示已完成 */
+    }
+    
+    .status-cancelled {
+        background-color: #f44336; /* 红色，表示已取消 */
+    }
+    
+    .order-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        background-color: #f8f5f0;
+        padding: 15px;
+        border-radius: 10px;
+        flex-wrap: nowrap;
+    }
+    
+    .order-info-item {
+        flex: 1;
+        text-align: center;
+        padding: 0 10px;
+    }
+    
+    .info-label {
+        color: #8b5a2b;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    .info-value {
+        color: #6d4c41;
+        word-break: break-word;
+    }
+    
+    .order-actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .order-btn {
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        color: #fff;
+        background-color: #8b5a2b;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        margin-left: 10px;
+    }
+    
+    .order-btn:hover {
+        background-color: #6d4c41;
+        transform: translateY(-2px);
+    }
+    
+    .detail-btn {
+        background-color: #8b5a2b;
+    }
+    
+    .detail-btn:hover {
+        background-color: #6d4c41;
+    }
+    
+    .no-orders {
+        text-align: center;
+        padding: 50px 20px;
+        color: #6d4c41;
+    }
+    
+    .no-orders p {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+    
+    .customer-info {
+        background-color: #f8f5f0;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .customer-info h4 {
+        color: #8b5a2b;
+        margin-bottom: 10px;
+        font-size: 1rem;
+        text-align: center;
+    }
+    
+    .order-details-section {
+        margin: 15px 0;
+        border-top: 1px dashed #e0d6c8;
+        padding-top: 15px;
+    }
+    
+    .order-details-section h3 {
+        color: #8b5a2b;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    
+    .order-details-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+        table-layout: fixed;
+    }
+    
+    .order-details-table th, 
+    .order-details-table td {
+        padding: 12px 8px;
+        text-align: center;
+        border-bottom: 1px solid #e0d6c8;
+        word-break: break-word;
+    }
+    
+    .order-details-table th {
+        color: #8b5a2b;
+        background-color: #f8f5f0;
+        font-weight: bold;
+    }
+    
+    .status-actions {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px dashed #e0d6c8;
+        display: flex;
+        justify-content: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% if orders %}
+    <div class="orders-list" id="orders-container">
+        {% for order in orders %}
+            <div class="order-item" data-status="{{ order.status }}">
+                <div class="order-header">
+                    <div>
+                        <span class="order-id">订单号: {{ order.bulk_order_id }}</span>
+                        <span class="order-status status-{{ order.status }}">
+                            {% if order.status == 'pending' %}
+                                待支付
+                            {% elif order.status == 'preparing' %}
+                                准备中
+                            {% elif order.status == 'completed' %}
+                                已完成
+                            {% elif order.status == 'cancelled' %}
+                                已取消
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="order-time">
+                        {% if order.order_time %}
+                            {{ order.order_time.strftime('%Y-%m-%d %H:%M') if not order.order_time is string else order.order_time }}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="order-info">
+                    <div class="order-info-item">
+                        <div class="info-label">用户名</div>
+                        <div class="info-value">{{ order.username }}</div>
+                    </div>
+                    <div class="order-info-item">
+                        <div class="info-label">电话</div>
+                        <div class="info-value">{{ order.phone }}</div>
+                    </div>
+                    <div class="order-info-item">
+                        <div class="info-label">就餐方式</div>
+                        <div class="info-value">
+                            {% if order.dining_type == 'dine-in' %}
+                                堂食
+                            {% else %}
+                                外送
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="order-info-item">
+                        <div class="info-label">总金额</div>
+                        <div class="info-value">¥{{ "%.2f"|format(order.total_amount) }}</div>
+                    </div>
+                </div>
+                
+                {% if order.dining_type == 'delivery' %}
+                <div class="order-info" style="margin-top: -10px;">
+                    <div class="order-info-item" style="flex: 1; text-align: center;">
+                        <div class="info-label">配送地址</div>
+                        <div class="info-value">{{ order.address }}</div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- 订单详情 -->
+                <div class="order-details-section">
+                    <h3>订单明细</h3>
+                    <table class="order-details-table">
+                        <thead>
+                            <tr>
+                                <th>菜品名称</th>
+                                <th>单价</th>
+                                <th>数量</th>
+                                <th>小计</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set order_details = get_order_details(order.bulk_order_id) %}
+                            {% for item in order_details %}
+                            <tr>
+                                <td>{{ item.dish_name }}</td>
+                                <td>¥{{ "%.2f"|format(item.price) }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>¥{{ "%.2f"|format(item.amount) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 订单状态操作 -->
+                <div class="status-actions">
+                    <form class="status-form" data-order-id="{{ order.bulk_order_id }}" style="display: inline;">
+                        <select name="status" class="status-select" style="padding: 8px; border-radius: 5px; border: 1px solid #e0d6c8; margin-right: 10px;">
+                            <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>已下单</option>
+                            <option value="preparing" {% if order.status == 'preparing' %}selected{% endif %}>准备中</option>
+                            <option value="completed" {% if order.status == 'completed' %}selected{% endif %}>已完成</option>
+                        </select>
+                        <button type="button" class="order-btn update-status-btn">更新状态</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="no-orders">
+        <p>暂无订单</p>
+    </div>
+{% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 获取所有更新状态按钮
+    const updateButtons = document.querySelectorAll('.update-status-btn');
+    
+    // 为每个按钮添加点击事件
+    updateButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const form = this.closest('.status-form');
+            const orderId = form.dataset.orderId;
+            const statusSelect = form.querySelector('.status-select');
+            const status = statusSelect.value;
+            
+            // 创建FormData对象
+            const formData = new FormData();
+            formData.append('status', status);
+            
+            // 发送AJAX请求
+            fetch(`/admin/orders/${orderId}/update`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 更新成功，更新UI
+                    const orderItem = form.closest('.order-item');
+                    const statusSpan = orderItem.querySelector('.order-status');
+                    
+                    // 更新状态样式类
+                    statusSpan.className = `order-status status-${status}`;
+                    
+                    // 更新状态文本
+                    if (status === 'pending') {
+                        statusSpan.textContent = '已下单';
+                    } else if (status === 'preparing') {
+                        statusSpan.textContent = '准备中';
+                    } else if (status === 'completed') {
+                        statusSpan.textContent = '已完成';
+                    } else if (status === 'cancelled') {
+                        statusSpan.textContent = '已取消';
+                    }
+                    
+                    // 显示成功消息
+                    alert('订单状态已更新');
+                } else {
+                    // 更新失败，显示错误消息
+                    alert(data.message || '更新状态失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('更新状态时出错');
+            });
+        });
+    });
+});
+</script>
+{% endblock %} 

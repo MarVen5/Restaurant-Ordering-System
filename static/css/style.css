@@ -1,0 +1,871 @@
+/* 全局样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft YaHei', Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 头部样式 */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    color: #e74c3c;
+    font-size: 24px;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+nav ul li a:hover {
+    color: #e74c3c;
+}
+
+/* 表单样式 */
+.form-container {
+    max-width: 500px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h1 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #e74c3c;
+}
+
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.form-group button {
+    width: 100%;
+    padding: 12px;
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.form-group button:hover {
+    background-color: #c0392b;
+}
+
+.form-footer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.form-footer a {
+    color: #e74c3c;
+    text-decoration: none;
+}
+
+.error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* 主页样式 */
+main {
+    padding: 20px 0;
+}
+
+main h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.action-buttons {
+    margin-top: 30px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #e74c3c;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #c0392b;
+}
+
+/* 菜单样式 */
+.dishes-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.dish-card {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dish-card h3 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #e74c3c;
+    margin-bottom: 15px;
+}
+
+.dish-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.quantity-control label {
+    margin-right: 10px;
+}
+
+.quantity-control input {
+    width: 60px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+/* 菜品详情样式 */
+.back-link {
+    margin-bottom: 20px;
+}
+
+.back-link a {
+    color: #333;
+    text-decoration: none;
+}
+
+.dish-detail {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dish-detail h2 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.category {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.description {
+    margin-bottom: 30px;
+}
+
+.description h3 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.order-form {
+    margin-top: 30px;
+}
+
+.order-form h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* 订单详情样式 */
+.order-detail {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.order-detail h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.order-info {
+    margin-bottom: 30px;
+}
+
+.order-info p {
+    margin-bottom: 10px;
+}
+
+.order-info strong {
+    color: #333;
+}
+
+/* 首页样式 */
+.landing-page {
+    min-height: 100vh;
+    background-color: #fff;
+}
+
+.landing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+.landing-header nav ul {
+    display: flex;
+    list-style: none;
+}
+
+.landing-header nav ul li {
+    margin-left: 30px;
+}
+
+.landing-header nav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.landing-header nav ul li a:hover {
+    color: #e74c3c;
+}
+
+.nav-btn {
+    padding: 8px 16px;
+    background-color: #e74c3c;
+    color: #fff !important;
+    border-radius: 4px;
+}
+
+.nav-btn:hover {
+    background-color: #c0392b;
+}
+
+.hero {
+    height: 100vh;
+    background-image: url('https://via.placeholder.com/1920x1080?text=美味佳肴餐厅');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+    position: relative;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    padding: 0 20px;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero p {
+    font-size: 24px;
+    margin-bottom: 30px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: #e74c3c;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 18px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.cta-button:hover {
+    background-color: #c0392b;
+}
+
+.about-section, .featured-section {
+    padding: 80px 0;
+}
+
+.about-section {
+    background-color: #f9f9f9;
+}
+
+.about-section h2, .featured-section h2 {
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 40px;
+    color: #333;
+}
+
+.about-content {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.about-text {
+    flex: 1;
+}
+
+.about-text p {
+    margin-bottom: 20px;
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.about-image {
+    flex: 1;
+}
+
+.about-image img {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.featured-dishes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.featured-dish {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.featured-dish:hover {
+    transform: translateY(-5px);
+}
+
+.featured-dish img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.featured-dish h3 {
+    padding: 15px 20px 0;
+    font-size: 20px;
+    color: #333;
+}
+
+.featured-dish p {
+    padding: 10px 20px 20px;
+    color: #666;
+}
+
+.featured-cta {
+    text-align: center;
+    margin-top: 50px;
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 60px 0 30px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 250px;
+    margin-bottom: 30px;
+}
+
+.footer-section h3 {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: #e74c3c;
+}
+
+.footer-section p {
+    margin-bottom: 10px;
+    color: #ccc;
+}
+
+.copyright {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #444;
+    color: #999;
+}
+
+/* 购物车样式 */
+.cart-icon {
+    position: relative;
+    cursor: pointer;
+}
+
+.cart-icon i {
+    font-size: 24px;
+}
+
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #e74c3c;
+    color: #fff;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.cart-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 300px;
+    background-color: #fff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    display: none;
+    z-index: 1000;
+}
+
+.cart-dropdown.active {
+    display: block;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-item-info {
+    flex: 1;
+}
+
+.cart-item-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.cart-item-price {
+    color: #e74c3c;
+}
+
+.cart-item-quantity {
+    display: flex;
+    align-items: center;
+}
+
+.cart-item-quantity button {
+    background: none;
+    border: 1px solid #ddd;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.cart-item-quantity span {
+    margin: 0 10px;
+}
+
+.cart-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    font-weight: bold;
+}
+
+.cart-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.cart-buttons button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.cart-clear {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.cart-checkout {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .landing-header {
+        padding: 15px 20px;
+        flex-direction: column;
+    }
+    
+    .landing-header nav {
+        margin-top: 15px;
+    }
+    
+    .landing-header nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .landing-header nav ul li {
+        margin: 5px 10px;
+    }
+    
+    .hero h1 {
+        font-size: 32px;
+    }
+    
+    .hero p {
+        font-size: 18px;
+    }
+    
+    .about-content {
+        flex-direction: column;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+    }
+}
+
+/* 订单表格样式 */
+.order-details {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.order-table th,
+.order-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.order-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.order-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+.order-table tfoot {
+    font-weight: bold;
+}
+
+.order-table .total-label {
+    text-align: right;
+}
+
+.order-table .total-amount {
+    color: #e74c3c;
+}
+
+/* 订单状态跟踪 */
+.order-status {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.status-timeline {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    position: relative;
+}
+
+.status-timeline::before {
+    content: '';
+    position: absolute;
+    top: 25px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #ddd;
+    z-index: 1;
+}
+
+.status-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    flex: 1;
+}
+
+.status-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #fff;
+    border: 2px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    font-size: 20px;
+    color: #ddd;
+}
+
+.status-text {
+    font-size: 14px;
+    color: #666;
+}
+
+.status-item.active .status-icon {
+    background-color: #e74c3c;
+    border-color: #e74c3c;
+    color: #fff;
+}
+
+.status-item.active .status-text {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+/* 结算模态框 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+}
+
+.checkout-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.checkout-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.checkout-form {
+    margin-top: 30px;
+}
+
+.checkout-form h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* 分类筛选 */
+.category-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.filter-btn:hover {
+    background-color: #e9ecef;
+}
+
+.filter-btn.active {
+    background-color: #e74c3c;
+    color: #fff;
+    border-color: #e74c3c;
+}
+
+/* 菜品图片 */
+.dish-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 15px;
+}
+
+.dish-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dish-description {
+    color: #666;
+    margin-bottom: 15px;
+    line-height: 1.4;
+} 

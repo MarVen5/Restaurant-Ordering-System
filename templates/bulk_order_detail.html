@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单详情 - 山野食光</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #faf6f1;
+            color: #6d4c41;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* 页眉样式 */
+        header {
+            background-color: #8b5a2b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header .header-content {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        header h1 {
+            color: #fff;
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        header nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header nav ul li {
+            margin-left: 25px;
+        }
+        
+        header nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        
+        header nav ul li a:hover {
+            color: #ffd700;
+        }
+        
+        .nav-btn {
+            background-color: #fff;
+            color: #8b5a2b !important;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background-color: #ffd700;
+            color: #8b5a2b !important;
+        }
+        
+        .active-nav {
+            color: #ffd700 !important;
+            font-weight: bold;
+        }
+        
+        /* 订单详情容器样式 */
+        .order-detail-container {
+            max-width: 1200px;
+            margin: 100px auto 30px;
+            padding: 0 20px;
+        }
+        
+        .section-title {
+            text-align: center;
+            color: #8b5a2b;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+        
+        /* 返回链接 */
+        .back-link {
+            margin-bottom: 20px;
+        }
+        
+        .back-link a {
+            color: #8b5a2b;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            transition: color 0.3s;
+        }
+        
+        .back-link a:hover {
+            color: #6d4c41;
+        }
+        
+        .back-link i {
+            margin-right: 5px;
+        }
+        
+        /* 订单卡片 */
+        .order-card {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0d6c8;
+        }
+        
+        .order-title {
+            font-size: 1.5rem;
+            color: #8b5a2b;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .order-status {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #fff;
+            display: inline-block;
+        }
+        
+        .status-pending {
+            background-color: #ff9800; /* 橙色，表示待支付 */
+        }
+        
+        .status-preparing {
+            background-color: #2196f3; /* 蓝色，表示准备中 */
+        }
+        
+        .status-completed {
+            background-color: #4caf50; /* 绿色，表示已完成 */
+        }
+        
+        .status-cancelled {
+            background-color: #f44336; /* 红色，表示已取消 */
+        }
+        
+        .order-meta {
+            color: #999;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        /* 订单信息 */
+        .info-section {
+            margin-bottom: 30px;
+        }
+        
+        .info-title {
+            font-size: 1.2rem;
+            color: #8b5a2b;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #e0d6c8;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-item {
+            margin-bottom: 10px;
+        }
+        
+        .info-label {
+            color: #8b5a2b;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .info-value {
+            color: #6d4c41;
+        }
+        
+        /* 订单明细表格 */
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .order-table th, .order-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0d6c8;
+        }
+        
+        .order-table th {
+            background-color: #f8f5f0;
+            color: #8b5a2b;
+            font-weight: bold;
+        }
+        
+        .order-table tr:hover {
+            background-color: #f8f5f0;
+        }
+        
+        .order-table tfoot td {
+            font-weight: bold;
+            color: #8b5a2b;
+        }
+        
+        .total-row td {
+            border-top: 2px solid #e0d6c8;
+            font-weight: bold;
+        }
+        
+        .total-amount {
+            color: #f44336;
+        }
+        
+        /* 按钮 */
+        .btn-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            margin-left: 10px;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: #8b5a2b;
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            background-color: #6d4c41;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .order-status {
+                margin-top: 10px;
+                margin-left: 0;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .order-table {
+                font-size: 0.9rem;
+            }
+            
+            .order-table th, .order-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+        <header>
+        <div class="header-content">
+            <h1>山野食光</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">首页</a></li>
+                    <li><a href="{{ url_for('menu') }}">菜单</a></li>
+                    <li><a href="{{ url_for('tables') }}">桌位预订</a></li>
+                    <li><a href="{{ url_for('my_reviews') }}">评论</a></li>
+                    <li><a href="{{ url_for('my_orders') }}" class="active-nav">我的订单</a></li>
+                    {% if not session.get('user_id') %}
+                    <li><a href="{{ url_for('login') }}" class="nav-btn">登录</a></li>
+                    <li><a href="{{ url_for('register') }}" class="nav-btn">注册</a></li>
+                    {% else %}
+                    <li><a href="{{ url_for('logout') }}" class="nav-btn">退出登录</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        </header>
+        
+    <div class="order-detail-container">
+            <div class="back-link">
+            <a href="{{ url_for('my_orders') }}"><i class="fas fa-arrow-left"></i> 返回我的订单</a>
+        </div>
+        
+        <h1 class="section-title">订单详情</h1>
+        
+        <div class="order-card">
+            <div class="order-header">
+                <div>
+                    <h2 class="order-title">订单号: {{ order.bulk_order_id }}</h2>
+                    <div class="order-meta">
+                        下单时间：{{ order.order_time.strftime('%Y-%m-%d %H:%M') if not order.order_time is string else order.order_time }}
+                    </div>
+                </div>
+                <span class="order-status status-{{ order.status }}">
+                    {% if order.status == 'pending' %}
+                        待支付
+                    {% elif order.status == 'preparing' %}
+                        准备中
+                    {% elif order.status == 'completed' %}
+                        已完成
+                    {% elif order.status == 'cancelled' %}
+                        已取消
+                    {% endif %}
+                </span>
+            </div>
+            
+            <div class="info-section">
+                <h3 class="info-title">基本信息</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">就餐方式</div>
+                        <div class="info-value">
+                            {% if order.dining_type == 'dine-in' %}
+                                堂食
+                            {% else %}
+                                外送
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">支付方式</div>
+                        <div class="info-value">
+                            {% if order.payment_method == 'wechat' %}
+                                微信支付
+                            {% elif order.payment_method == 'alipay' %}
+                                支付宝
+                            {% else %}
+                                {{ order.payment_method }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">总金额</div>
+                        <div class="info-value">¥{{ "%.2f"|format(order.total_amount) }}</div>
+                    </div>
+                </div>
+                
+                {% if order.dining_type == 'delivery' %}
+                <h3 class="info-title">配送信息</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">配送地址</div>
+                        <div class="info-value">{{ order.address }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">联系电话</div>
+                        <div class="info-value">{{ order.phone }}</div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="info-section">
+                <h3 class="info-title">订单明细</h3>
+                    <table class="order-table">
+                        <thead>
+                            <tr>
+                                <th>菜品名称</th>
+                                <th>单价</th>
+                                <th>数量</th>
+                                <th>小计</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for detail in order_details %}
+                            <tr>
+                                <td>{{ detail.dish_name }}</td>
+                            <td>¥{{ "%.2f"|format(detail.price) }}</td>
+                                <td>{{ detail.quantity }}</td>
+                            <td>¥{{ "%.2f"|format(detail.price * detail.quantity) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                        <tr class="total-row">
+                            <td colspan="3" style="text-align: right;">总计：</td>
+                            <td class="total-amount">¥{{ "%.2f"|format(order.total_amount) }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                
+            <div class="btn-row">
+                <a href="{{ url_for('my_orders') }}" class="btn btn-primary">返回订单列表</a>
+                {% if order.status == 'completed' %}
+                <a href="{{ url_for('add_review', bulk_order_id=order.bulk_order_id) }}" class="btn btn-primary">评价订单</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

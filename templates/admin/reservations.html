@@ -1,0 +1,131 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}预订管理{% endblock %}
+
+{% block additional_styles %}
+<style>
+    .reservations-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .reservation-card {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        position: relative;
+    }
+    
+    .reservation-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .table-name {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #8b5a2b;
+        margin-bottom: 10px;
+    }
+    
+    .reservation-info {
+        margin-bottom: 15px;
+    }
+    
+    .info-row {
+        display: flex;
+        margin-bottom: 5px;
+    }
+    
+    .info-label {
+        width: 80px;
+        font-weight: bold;
+        color: #8b5a2b;
+    }
+    
+    .info-value {
+        color: #6d4c41;
+        flex: 1;
+    }
+    
+    .reservation-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 15px;
+    }
+    
+    .action-btn {
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        color: #fff;
+        background-color: #8b5a2b;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-left: 10px;
+    }
+    
+    .action-btn:hover {
+        background-color: #6d4c41;
+    }
+    
+    .no-reservations {
+        text-align: center;
+        padding: 50px 0;
+        color: #6d4c41;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% if reservations %}
+    <div class="reservations-container">
+        {% for reservation in reservations %}
+        <div class="reservation-card" data-date="{{ reservation.reservation_time.strftime('%Y-%m-%d') if not reservation.reservation_time is string else reservation.reservation_time.split(' ')[0] }}">
+            <div class="table-name">{{ reservation.table_name }}</div>
+            
+            <div class="reservation-info">
+                <div class="info-row">
+                    <div class="info-label">预订人:</div>
+                    <div class="info-value">{{ reservation.username }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">电话:</div>
+                    <div class="info-value">{{ reservation.phone }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">时间:</div>
+                    <div class="info-value">
+                        {% if reservation.reservation_time %}
+                            {{ reservation.reservation_time.strftime('%Y-%m-%d %H:%M') if not reservation.reservation_time is string else reservation.reservation_time }}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">人数:</div>
+                    <div class="info-value">{{ reservation.people_count }} 人</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">时长:</div>
+                    <div class="info-value">{{ reservation.duration }} 分钟</div>
+                </div>
+                {% if reservation.notes %}
+                <div class="info-row">
+                    <div class="info-label">备注:</div>
+                    <div class="info-value">{{ reservation.notes }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="no-reservations">
+        <p>暂无预订</p>
+    </div>
+{% endif %}
+{% endblock %}

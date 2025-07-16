@@ -1,0 +1,306 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}桌位管理{% endblock %}
+
+{% block additional_styles %}
+<style>
+    .add-form {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-title {
+        color: #8b5a2b;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #e0d6c8;
+        padding-bottom: 10px;
+        text-align: center;
+    }
+    
+    .form-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .form-row .form-group {
+        flex: 1;
+        margin-bottom: 0;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #8b5a2b;
+        font-weight: bold;
+    }
+    
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #e0d6c8;
+        border-radius: 5px;
+        font-size: 16px;
+        color: #6d4c41;
+    }
+    
+    .btn {
+        background-color: #8b5a2b;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .btn:hover {
+        background-color: #6d4c41;
+    }
+    
+    .btn-container {
+        text-align: center;
+        margin-top: 15px;
+    }
+    
+    .tables-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .table-card {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+    
+    .table-name {
+        font-size: 1.5rem;
+        color: #8b5a2b;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    
+    .table-seats {
+        font-size: 1.1rem;
+        color: #6d4c41;
+        margin-bottom: 15px;
+    }
+    
+    .table-status {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        color: #fff;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+    }
+    
+    .status-available {
+        background-color: #4caf50;
+    }
+    
+    .status-reserved {
+        background-color: #ff9800;
+    }
+    
+    .status-occupied {
+        background-color: #f44336;
+    }
+    
+    .table-actions {
+        display: flex;
+        justify-content: center;
+        margin-top: 15px;
+        gap: 10px;
+    }
+    
+    .action-btn {
+        padding: 5px 10px;
+        border-radius: 3px;
+        text-decoration: none;
+        color: #fff;
+        font-size: 14px;
+        display: inline-block;
+        cursor: pointer;
+    }
+    
+    .edit-btn {
+        background-color: #8b5a2b;
+    }
+    
+    .delete-btn {
+        background-color: #8b5a2b;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="add-form">
+    <h2 class="form-title">添加桌位</h2>
+    <form action="{{ url_for('admin_tables') }}" method="post">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="table_name">桌位名称</label>
+                <input type="text" id="table_name" name="table_name" required placeholder="例如: A-1, VIP-1">
+            </div>
+            
+            <div class="form-group">
+                <label for="seats">座位数量</label>
+                <input type="number" id="seats" name="seats" min="1" required>
+            </div>
+        </div>
+        
+        <div class="btn-container">
+            <button type="submit" class="btn">添加桌位</button>
+        </div>
+    </form>
+</div>
+
+<div class="tables-grid">
+    {% for table in tables %}
+    <div class="table-card" data-id="{{ table.table_id }}">
+        <div class="table-name">{{ table.table_name }}</div>
+        <div class="table-seats">{{ table.seats }} 人座</div>
+        
+        {% if table.status == 'available' %}
+            <span class="table-status status-available">可用</span>
+        {% elif table.status == 'reserved' %}
+            <span class="table-status status-reserved">已预订</span>
+        {% elif table.status == 'occupied' %}
+            <span class="table-status status-occupied">使用中</span>
+        {% endif %}
+        
+        <div class="table-actions">
+            <span class="action-btn edit-btn" onclick="openEditModal({{ table.table_id }}, '{{ table.table_name }}', {{ table.seats }})">编辑</span>
+            <form action="{{ url_for('admin_delete_table', table_id=table.table_id) }}" method="post" style="display: inline;">
+                <button type="submit" class="action-btn delete-btn" onclick="return confirm('确定要删除这个桌位吗？')">删除</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- 编辑桌位模态框 -->
+<div id="edit-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeEditModal()">&times;</span>
+        <h2 class="form-title">编辑桌位</h2>
+        <form id="edit-form" method="post">
+            <div class="form-group">
+                <label for="edit_table_name">桌位名称</label>
+                <input type="text" id="edit_table_name" name="table_name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_seats">座位数量</label>
+                <input type="number" id="edit_seats" name="seats" min="1" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_status">桌位状态</label>
+                <select id="edit_status" name="status">
+                    <option value="available">可用</option>
+                    <option value="reserved">已预订</option>
+                    <option value="occupied">使用中</option>
+                </select>
+            </div>
+            
+            <div class="btn-container">
+                <button type="submit" class="btn">保存更改</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+    /* 模态框样式 */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-content {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 10px;
+        width: 80%;
+        max-width: 500px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        position: relative;
+    }
+    
+    .close-modal {
+        position: absolute;
+        right: 20px;
+        top: 10px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #8b5a2b;
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    function openEditModal(tableId, tableName, seats) {
+        document.getElementById('edit-modal').style.display = 'block';
+        document.getElementById('edit_table_name').value = tableName;
+        document.getElementById('edit_seats').value = seats;
+        
+        // 获取当前表格的状态
+        var tableCard = document.querySelector('.table-card[data-id="' + tableId + '"]');
+        if (tableCard) {
+            var statusElement = tableCard.querySelector('.table-status');
+            if (statusElement) {
+                var statusText = statusElement.textContent.trim();
+                
+                // 根据状态文本设置下拉框的值
+                var statusSelect = document.getElementById('edit_status');
+                if (statusText === '可用') {
+                    statusSelect.value = 'available';
+                } else if (statusText === '已预订') {
+                    statusSelect.value = 'reserved';
+                } else if (statusText === '使用中') {
+                    statusSelect.value = 'occupied';
+                }
+            }
+        }
+        
+        // 设置表单提交地址，修改为正确的URL
+        document.getElementById('edit-form').action = '/admin/tables/' + tableId;
+    }
+    
+    function closeEditModal() {
+        document.getElementById('edit-modal').style.display = 'none';
+    }
+    
+    // 点击模态框外部关闭
+    window.onclick = function(event) {
+        var modal = document.getElementById('edit-modal');
+        if (event.target == modal) {
+            closeEditModal();
+        }
+    };
+</script>
+{% endblock %} 

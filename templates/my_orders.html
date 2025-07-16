@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的订单 - 山野食光</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #faf6f1;
+            color: #6d4c41;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* 页眉样式 */
+        header {
+            background-color: #8b5a2b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header .header-content {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        header h1 {
+            color: #fff;
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        header nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header nav ul li {
+            margin-left: 25px;
+        }
+        
+        header nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        
+        header nav ul li a:hover {
+            color: #ffd700;
+        }
+        
+        .nav-btn {
+            background-color: #fff;
+            color: #8b5a2b !important;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background-color: #ffd700;
+            color: #8b5a2b !important;
+        }
+        
+        .active-nav {
+            color: #ffd700 !important;
+            font-weight: bold;
+        }
+        
+        /* 订单容器样式 */
+        .orders-container {
+            max-width: 1200px;
+            margin: 100px auto 30px;
+            padding: 0 20px;
+        }
+        
+        .section-title {
+            text-align: center;
+            color: #8b5a2b;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+        
+        /* 订单列表样式 */
+        .orders-list {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .order-item {
+            padding: 25px;
+            border-bottom: 1px solid #e0d6c8;
+            transition: background-color 0.3s;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .order-item:hover {
+            background-color: #f8f5f0;
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .order-id {
+            font-weight: bold;
+            color: #8b5a2b;
+            font-size: 1.2rem;
+        }
+        
+        .order-time {
+            color: #999;
+            font-size: 0.9rem;
+        }
+        
+        .order-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #fff;
+            display: inline-block;
+            margin-left: 15px;
+        }
+        
+        .status-pending {
+            background-color: #ff9800; /* 橙色，表示已下单 */
+        }
+        
+        .status-preparing {
+            background-color: #2196f3; /* 蓝色，表示准备中 */
+        }
+        
+        .status-completed {
+            background-color: #4caf50; /* 绿色，表示已完成 */
+        }
+        
+        .order-details {
+            margin-top: 15px;
+        }
+        
+        .order-details h4 {
+            color: #8b5a2b;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .order-items {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .order-item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #e0d6c8;
+        }
+        
+        .order-item-row:last-child {
+            border-bottom: none;
+        }
+        
+        .item-name {
+            flex: 1;
+        }
+        
+        .item-price {
+            width: 80px;
+            text-align: right;
+            color: #8b5a2b;
+            font-weight: bold;
+        }
+        
+        .item-quantity {
+            width: 60px;
+            text-align: center;
+        }
+        
+        .item-total {
+            width: 100px;
+            text-align: right;
+            color: #8b5a2b;
+            font-weight: bold;
+        }
+        
+        .order-summary {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0d6c8;
+        }
+        
+        .order-total {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #8b5a2b;
+        }
+        
+        .order-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+        
+        .order-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #fff;
+            background-color: #8b5a2b;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+            text-decoration: none;
+        }
+        
+        .order-btn:hover {
+            background-color: #6d4c41;
+            transform: translateY(-2px);
+        }
+        
+        .no-orders {
+            text-align: center;
+            padding: 50px 20px;
+            color: #6d4c41;
+        }
+        
+        .no-orders p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .no-orders .order-btn {
+            display: inline-block;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .order-time {
+                margin-top: 5px;
+            }
+            
+            .order-status {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            
+            .order-item-row {
+                flex-wrap: wrap;
+            }
+            
+            .item-name {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            
+            .item-price, .item-quantity, .item-total {
+                width: auto;
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>山野食光</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">首页</a></li>
+                    <li><a href="{{ url_for('menu') }}">菜单</a></li>
+                    <li><a href="{{ url_for('tables') }}">桌位预订</a></li>
+                    <li><a href="{{ url_for('my_reviews') }}">评论</a></li>
+                    <li><a href="{{ url_for('my_orders') }}" class="active-nav">我的订单</a></li>
+                    <li><a href="{{ url_for('logout') }}" class="nav-btn">退出登录</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="orders-container">
+        <h1 class="section-title">我的订单</h1>
+        
+        {% if orders %}
+            <div class="orders-list">
+                {% for order in orders %}
+                <div class="order-item">
+                    <div class="order-header">
+                        <div>
+                            <span class="order-id">订单号: {{ order.bulk_order_id }}</span>
+                            <span class="order-status status-{{ order.status }}">
+                                {% if order.status == 'pending' %}
+                                    已下单
+                                {% elif order.status == 'preparing' %}
+                                    准备中
+                                {% elif order.status == 'completed' %}
+                                    已完成
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="order-time">
+                            {{ order.order_time.strftime('%Y-%m-%d %H:%M') if not order.order_time is string else order.order_time }}
+                        </div>
+                    </div>
+                    
+                    <div class="order-details">
+                        <h4>订单详情</h4>
+                        <ul class="order-items">
+                            {% set order_details = get_order_details(order.bulk_order_id) %}
+                            {% for item in order_details %}
+                            <li class="order-item-row">
+                                <span class="item-name">{{ item.dish_name }}</span>
+                                <span class="item-price">¥{{ "%.2f"|format(item.price) }}</span>
+                                <span class="item-quantity">x {{ item.quantity }}</span>
+                                <span class="item-total">¥{{ "%.2f"|format(item.amount) }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    
+                    <div class="order-summary">
+                        <div class="order-total">总计: ¥{{ "%.2f"|format(order.total_amount) }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-orders">
+                <p>您还没有订单</p>
+                <a href="{{ url_for('menu') }}" class="order-btn">去点餐</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html> 
